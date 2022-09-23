@@ -5,7 +5,7 @@ import requests
 import configparser
 from fake_useragent import UserAgent
 import os
-# 读取config文件
+# read configuration file
 curpath = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(curpath, "config.ini")
 conf = configparser.ConfigParser()
@@ -23,14 +23,14 @@ for i in range(start, end + 1):
 ip = []
 
 
-# 使用随机的请求头对指定的url进行爬取
+# Crawl the specified url using a random request header
 def get_ip(url):
     headers = {'User-Agent': UserAgent().chrome}
     r = requests.get(url, headers=headers)
     t = r.text
     bs = BeautifulSoup(t, "html.parser")
     l = bs.find("table", class_="table table-bordered table-striped")
-    # 获取网页中关于IP地址的所有信息
+    # Get all information about IP addresses in web pages
     info = []
     for child in l.descendants:
         if type(child) == bs4.element.NavigableString:
@@ -40,16 +40,16 @@ def get_ip(url):
     for i in info:
         if i != '\n':
             a.append(i)
-    # 从所有信息中获提取IP地址
+    # Extract IP address from all information
     for i in range(0, len(a[7:]), 7):
         ip.append(a[7:][i])
 
 
-# 将所有页面的IP地址合并到一个列表里，每两次爬取之间间隔1秒
+# Combine the IP addresses of all pages into one list, wait for 1 second between every two crawls
 for i in totalpage:
     get_ip(i)
     time.sleep(1)
-#指定用于测试的网页和请求头
+# Specify the page and request header to be used for testing
 test_url = 'https://movie.douban.com/top250'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -57,12 +57,12 @@ headers = {
 }
 Valid = []
 
-# 测试IP地址是否有效
-print('正在获取IP...')
+# Test if the IP address is valid
+print('Acquiring IP...')
 for i in ip:
     proxies = {"http": "http://" + str(i)}
     r = requests.get(test_url, headers=headers, proxies=proxies)
     if r.status_code == 200:
         Valid.append(i)
 if Valid != []:
-    print('IP获取成功')
+    print('IP acquisition success')

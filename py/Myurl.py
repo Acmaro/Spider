@@ -3,7 +3,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import re
-# 读取config文件
+# read configuration file
 curpath = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(curpath, "config.ini")
 conf = configparser.ConfigParser()
@@ -20,7 +20,7 @@ headers = {
                   'Chrome/86.0.4240.198 Safari/537.36 '
 }
 totalpages = []
-# 获取所有将要读取的网址
+# get the urls waiting to be crawled
 for i in range(start, end + 1):
     a = 'https://movie.douban.com/top250?start='
     b = '&filter='
@@ -30,7 +30,7 @@ for i in range(start, end + 1):
 url = []
 
 
-# 获取指定页面所包含的所有目标网址
+# Get all the target URLs contained in the specified page
 def geturl(page):
     r = requests.get(page, headers=headers)
     t = r.text
@@ -38,7 +38,7 @@ def geturl(page):
     l = []
     l = bs.find_all("a")
     all_url = []
-    # 读取符合格式的网址
+    # Read URLs that match the format
     for i in l:
         all_url.append(i.get('href'))
     for i in all_url:
@@ -46,6 +46,6 @@ def geturl(page):
         if a is not None and a.string not in url:
             url.append(a.string)
 
-# 整合所有页面的目标网址
+# Collect target URLs of all pages
 for i in totalpages:
     geturl(i)
